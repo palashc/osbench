@@ -23,7 +23,7 @@ void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trial
 
   // First, warm up I-Cache with 10,000,000 calls.
   // MUST disable gcc optimizations for this to work
-  for (int k=0; k < 10000000; k++) {
+  for (int k=0; k < ICACHE_HITS; k++) {
     benchmarkCycles(test);
   }
 
