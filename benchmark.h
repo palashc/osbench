@@ -8,6 +8,20 @@
 
 #include "constants.h"
 #include "cpu_tests.h"
+#include "utils.h"
+#include "limits.h"
+
+typedef struct {
+  uint32_t siz; 
+
+  uint64_t median;
+  uint64_t min;
+  uint64_t max;
+
+  double mean;
+  double stdev;
+} benchmark_stats;
+
 
 extern uint64_t benchmarkCycles(fun_ptr test) {
   uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
@@ -36,3 +50,27 @@ extern uint64_t benchmarkCycles(fun_ptr test) {
   return end-start;
 }
 
+extern benchmark_stats fill_stats(uint64_t* arr, uint32_t siz) {
+  benchmark_stats stats = {0};
+
+  stats.siz = siz;
+  stats.median = median(arr, siz);
+  stats.mean = mean(arr,siz);
+  stats.stdev = stdev(arr, stats.mean, siz);
+
+  uint64_t min = INT_MAX;
+  uint64_t max = INT_MIN;
+  for (int i=0; i<siz; i++) {
+    if(arr[i] < min){
+      min = arr[i];
+    }
+    if (arr[i] > max){
+      max = arr[i];
+    }
+  }
+
+  stats.min = min;
+  stats.max = max;
+
+  return stats;
+}
