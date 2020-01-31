@@ -32,3 +32,23 @@ double stdev(uint64_t* arr, uint32_t siz) {
   var /= siz;
   return sqrt(var);
 }
+
+uint64_t min(uint64_t* arr, uint32_t siz){
+  uint64_t min = INT_MAX;
+  for (int i=0; i<siz; i++) {
+    if(arr[i] < min){
+      min = arr[i]
+    }
+  }
+  return min;
+}
+
+uint64_t max(uint64_t* arr, uint32_t siz){
+  uint64_t max = INT_MIN;
+  for (int i=0; i<siz; i++) {
+    if(arr[i] < min){
+      max = arr[i]
+    }
+  }
+  return max;
+}
