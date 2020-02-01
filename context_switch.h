@@ -96,7 +96,7 @@ uint64_t benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
 	}
 	
 	uint64_t total = end - start;
-	total = total/2000;
+	total = total/(2*SWITCHS);
 	return total;
 
 }
@@ -124,5 +124,3 @@ uint64_t benchmarkContextSwitchProcess() {
 	}	
 
 }
-
-
