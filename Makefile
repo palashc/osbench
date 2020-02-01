@@ -1,6 +1,6 @@
 
 default: main.c constants.h benchmark.h cpu_tests.h
-	g++ -o test.out main.c 
+	gcc -O0 -o test.out main.c -lm
 
 clean: 
 	rm -f *.out
