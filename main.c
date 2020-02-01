@@ -35,7 +35,7 @@ void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trial
   // begin benchmark tests
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
-      iteration_results[j] = benchmarkContextSwitch();
+      iteration_results[j] = benchmarkContextSwitchThread();
 
     }
 
