@@ -17,7 +17,9 @@ typedef void (*fun_ptr)();
 // tested on 1000 trials of 100000 iterations
 const uint32_t MEASUREMENT_OVERHEAD = 38;
 
+
+#if !defined(ICACHE_HITS)
 // empirically tested number of consecutive function calls for a function
 // pointer to be in I_CACHE
 const uint32_t ICACHE_HITS = 10000000;
-
+#endif
