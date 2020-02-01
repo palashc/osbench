@@ -9,18 +9,18 @@
 #include <unistd.h>
 #include "constants.h"
 
-#define ITERATIONS 100000
+#define SWITCHS 1000
 
 struct PipeFD {
-	uint32_t readFD;
-	uint32_t writeFD;
+	int readFD;
+	int writeFD;
 };
 
 void testContextSwitchTime(struct PipeFD pipefd) {
 
 	char buf[1];
 
-	for (int i = 0; i < ITERATIONS; ++i)
+	for (int i = 0; i < SWITCHS; ++i)
 	{
 		read(pipefd.readFD, buf, 1);
 		write(pipefd.writeFD, buf, 1);
@@ -34,11 +34,11 @@ void* threadStart(void *arg) {
 }
 
 //TODO: check return values of system calls
-int main(int argc, char const *argv[])
+uint64_t benchmarkContextSwitch()
 {
 
-	uint32_t parent_child_fd[2];
-	uint32_t child_parent_fd[2];
+	int parent_child_fd[2];
+	int child_parent_fd[2];
 
 	pipe(parent_child_fd);
 	pipe(child_parent_fd);
@@ -59,17 +59,30 @@ int main(int argc, char const *argv[])
 	char buf[2] = {'x'};
 	write(parentFD.writeFD, buf, 1);
 
-	clock_t start, end;
-	start = clock();
+  uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
+  asm volatile (
+    "CPUID\n\t"
+		"RDTSC\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+    "=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+  );
+  
 	testContextSwitchTime(parentFD);
-	end = clock();
-	double time_taken = ((double)(end-start))/CLOCKS_PER_SEC; 
 
+	asm volatile (
+		"RDTSCP\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+    "=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+  );
+
+  uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+  uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
 	pthread_join(childThread, NULL);
-
-	printf("Time per context switch %f ns\n", (time_taken * 1000000000)/ (2 * ITERATIONS)); 
-
-	return 0;
+uint64_t total = end - start;
+total = total/2000;
+return total;
 }
 
 
