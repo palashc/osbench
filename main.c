@@ -5,6 +5,7 @@
 #include "cpu_tests.h"
 #include "benchmark.h"
 #include "utils.h"
+#include "context_switch.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -34,7 +35,7 @@ void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trial
   // begin benchmark tests
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
-      iteration_results[j] = benchmarkCycles(test);
+      iteration_results[j] = benchmarkContextSwitch();
 
     }
 
