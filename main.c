@@ -7,13 +7,17 @@
 #include "utils.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
-#define ITERATIONS 100000
+#if !defined(ITERATIONS)
+#define ITERATIONS 100000 //for testing change to 10
+#endif
+#if !defined(TRIALS)
 #define TRIALS 1000
+#endif
 
 void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
 
 int main() {
-  runTest(testMeasurementOverhead, "Measurement Overhead", ITERATIONS, 1);
+  runTest(testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
 }
 
 void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
@@ -31,6 +35,7 @@ void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trial
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
       iteration_results[j] = benchmarkCycles(test);
+
     }
 
     // select median of all iteration tests per trial

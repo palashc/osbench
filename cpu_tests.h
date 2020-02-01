@@ -1,6 +1,10 @@
 #pragma once
 
 #include <unistd.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
 
 void proc0() {}
 void proc1(int a) {};
@@ -28,3 +32,12 @@ void testCall7() { proc7(1,2,3,4,5,6,7); }
 void testMeasurementOverhead() {}
 void testSleep() { sleep(1); }
 
+
+void testSystemCall(){ getpid(); }
+
+pthread_t tid[1];
+
+void* testThreadf(void * arg){ }
+void testKernelThread(){
+	pthread_create(&tid[0], NULL, &testThreadf, NULL);
+}
