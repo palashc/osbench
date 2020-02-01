@@ -11,32 +11,46 @@
 #if !defined(ITERATIONS)
 #define ITERATIONS 100000 //for testing change to 10
 #endif
+
 #if !defined(TRIALS)
 #define TRIALS 1000
 #endif
 
-void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
+void runTest(ben_ptr ben, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
 
 int main() {
-  runTest(testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall0, "Call method with 0 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall1, "Call method with 1 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall2, "Call method with 2 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall3, "Call method with 3 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall4, "Call method with 4 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall5, "Call method with 5 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall6, "Call method with 6 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testCall7, "Call method with 7 parameters", ITERATIONS, TRIALS);
+  // runTest(benchmarkCycles, testSystemCall, "System call: clock_gettime", ITERATIONS, TRIALS);
+  // runTest(benchmarkThread, NULL, "System call: test kernel thread", ITERATIONS, TRIALS);
+  // runTest(benchmarkThread, NULL, "Test kernel thread", ITERATIONS, TRIALS);
+  // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
+  runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
+  runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
 }
 
-void runTest(fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
 
   uint64_t trial_results[trials];
   uint64_t iteration_results[iterations];
 
   // First, warm up I-Cache with 10,000,000 calls.
   // MUST disable gcc optimizations for this to work
-  for (int k=0; k < ICACHE_HITS; k++) {
-    benchmarkCycles(test);
+  for (int i = 0; i < ICACHE_HITS; i++) {
+    benchmark(test);
   }
 
   // begin benchmark tests
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
-      iteration_results[j] = benchmarkContextSwitchThread();
-
+      iteration_results[j] = benchmark(test);
     }
 
     // select median of all iteration tests per trial

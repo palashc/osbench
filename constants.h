@@ -14,12 +14,14 @@ typedef unsigned short  uint16_t;
 // the fun_ptr does not take an input
 typedef void (*fun_ptr)();
 
+typedef uint64_t (*ben_ptr)(fun_ptr);
+
 // tested on 1000 trials of 100000 iterations
-const uint32_t MEASUREMENT_OVERHEAD = 38;
+const uint32_t MEASUREMENT_OVERHEAD = 40;
 
 
 #if !defined(ICACHE_HITS)
-// empirically tested number of consecutive function calls for a function
-// pointer to be in I_CACHE
-const uint32_t ICACHE_HITS = 10000000;
+    // empirically tested number of consecutive function calls for a function
+    // pointer to be in I_CACHE
+    const uint32_t ICACHE_HITS = 10000000;
 #endif
