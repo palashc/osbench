@@ -67,7 +67,7 @@ int main(int argc, char const *argv[])
 
 	pthread_join(childThread, NULL);
 
-	printf("Time per context switch %f \n", (time_taken * 1000000000)/ (2 * ITERATIONS)); 
+	printf("Time per context switch %f ns\n", (time_taken * 1000000000)/ (2 * ITERATIONS)); 
 
 	return 0;
 }
