@@ -1,6 +1,9 @@
 
+#pragma once
+
 #include "constants.h"
 #include "math.h"
+#include "limits.h"
 
 // this sorts the input parameter and approximates median by returning the middle
 // of the array
@@ -22,8 +25,7 @@ uint64_t mean(uint64_t* arr, uint32_t siz) {
   return sum/siz;
 }
 
-double stdev(uint64_t* arr, uint32_t siz) {
-  int m = mean(arr,siz);
+double stdev(uint64_t* arr, double m, uint32_t siz) {
   int var = 0;
   for( int i = 0; i < siz; i++ )
   {
@@ -34,21 +36,21 @@ double stdev(uint64_t* arr, uint32_t siz) {
 }
 
 uint64_t min(uint64_t* arr, uint32_t siz){
-  uint64_t min = INT_MAX;
+  uint64_t _min = INT_MAX;
   for (int i=0; i<siz; i++) {
-    if(arr[i] < min){
-      min = arr[i]
+    if(arr[i] < _min){
+      _min = arr[i];
     }
   }
-  return min;
+  return _min;
 }
 
 uint64_t max(uint64_t* arr, uint32_t siz){
-  uint64_t max = INT_MIN;
+  uint64_t _max = INT_MIN;
   for (int i=0; i<siz; i++) {
-    if(arr[i] < min){
-      max = arr[i]
+    if(arr[i] > _max){
+      _max = arr[i];
     }
   }
-  return max;
+  return _max;
 }
