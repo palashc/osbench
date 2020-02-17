@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -9,7 +11,7 @@
 #include <unistd.h>
 #include "constants.h"
 
-#define SWITCHS 1000
+#define SWITCHS 10000
 
 struct PipeFD {
 	int readFD;
@@ -65,7 +67,7 @@ void* threadStart(void *arg) {
 	return NULL;
 }
 
-uint64_t benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
+uint64_t cs_benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
 
 	char buf[2] = {'x'};
 	write(pipefd.writeFD, buf, 1);
@@ -101,26 +103,24 @@ uint64_t benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
 
 }
 //TODO: check return values of system calls
-uint64_t benchmarkContextSwitchThread()
+uint64_t benchmarkContextSwitchThread(fun_ptr _ignore)
 {
-
 	struct Pipes pipes = getPipes();
 
 	pthread_t childThread;
 	pthread_create(&childThread, NULL, threadStart, (void *)&(pipes.childFD));
 
-	return benchmarkHelper(pipes.parentFD, &childThread);
+	return cs_benchmarkHelper(pipes.parentFD, &childThread);
 }
 
-uint64_t benchmarkContextSwitchProcess() {
+uint64_t benchmarkContextSwitchProcess(fun_ptr _ignore) {
 	struct Pipes pipes = getPipes();
 
 	if (fork() == 0) {
 		testContextSwitchTime(pipes.childFD);
-		return 0;
+		exit(0);
 	}
 	else {
-		return benchmarkHelper(pipes.parentFD, NULL);
+		return cs_benchmarkHelper(pipes.parentFD, NULL);
 	}	
-
 }
