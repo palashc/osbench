@@ -6,6 +6,7 @@
 #include "benchmark.h"
 #include "utils.h"
 #include "context_switch.h"
+#include "page_fault.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -32,8 +33,9 @@ int main() {
   // runTest(benchmarkThread, NULL, "System call: test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkThread, NULL, "Test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+   runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
