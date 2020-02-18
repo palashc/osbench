@@ -41,6 +41,7 @@ uint64_t benchmark_pf()
 	uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
 	uint64_t total = end - start;
 
+	int unmap_result = munmap(addr, file_size);
 	close(fd);
 
 	return total;
