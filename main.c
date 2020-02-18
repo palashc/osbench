@@ -35,7 +35,8 @@ int main() {
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
-  runTest(benchmarkRamBandwidth, NULL, "RAM Bandwidth", ITERATIONS, TRIALS);
+  runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
+  runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
