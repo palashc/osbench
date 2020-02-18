@@ -11,7 +11,7 @@ size_t get_file_size(const char *filename) {
 	return st.st_size;
 }
 
-uint64_t benchmark_pf()
+uint64_t benchmark_pf(fun_ptr _ignore)
 {
 
 	size_t file_size = get_file_size("page_fault.h");
