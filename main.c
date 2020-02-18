@@ -6,6 +6,7 @@
 #include "benchmark.h"
 #include "utils.h"
 #include "context_switch.h"
+#include "mem_tests.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -32,8 +33,22 @@ int main() {
   // runTest(benchmarkThread, NULL, "System call: test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkThread, NULL, "Test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 16000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 32000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 64000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 128000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 256000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 512000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 1024000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 2048000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 3072000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 4096000);
+   run_memoryAccessTest(ITERATIONS, TRIALS, 6144000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 8192000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 16384000);
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
