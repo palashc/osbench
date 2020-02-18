@@ -19,9 +19,6 @@ uint64_t benchmark_pf()
 
 	char* addr = mmap(NULL, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);
 
-	size_t pagesize = getpagesize();
-
-
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
 	"CPUID\n\t"
