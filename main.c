@@ -36,19 +36,27 @@ int main() {
   // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
 
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 16000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 32000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 64000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 128000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 256000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 512000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 1024000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 2048000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 3072000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 4096000);
-   run_memoryAccessTest(ITERATIONS, TRIALS, 6144000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 8192000);
-  // run_memoryAccessTest(ITERATIONS, TRIALS, 16384000);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 300000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 400000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 500000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 600000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 700000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 800000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 900000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 1000000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 600000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 700000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 800000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 900000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 1000000, 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,20), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,22), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
+  //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {

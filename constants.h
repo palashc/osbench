@@ -16,6 +16,7 @@ typedef unsigned char   uint8_t;
 typedef void (*fun_ptr)();
 
 typedef uint64_t (*ben_ptr)(fun_ptr);
+typedef uint64_t (*m_ben_ptr)(void**, int, int);
 
 // tested on 1000 trials of 100000 iterations
 const uint32_t MEASUREMENT_OVERHEAD = 40;
