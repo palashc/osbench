@@ -59,7 +59,8 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 	uint64_t total = end - start;
 
 	free(arr);
-	
+	// time in seconds = cycles / frequency in Hz
+	// bandwidth = size / time
 	return (uint64_t) ((SIZE*1024*FREQ*pow(10, 9))/(double) total);
 }
 
@@ -115,6 +116,7 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 	uint64_t total = end - start; 
 
 	free(arr);
-	
+	// time in seconds = cycles / frequency in Hz
+	// bandwidth = size / time	
 	return (uint64_t) ((SIZE*1024*FREQ*pow(10, 9))/(double) total);
 }
