@@ -13,6 +13,7 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 	long size = (long)(SIZE * 1024 * 1024 * 1024);
 	char temp;
 	char *arr = (char *) malloc(size);
+	char *dst = (char *) malloc(size);;
 
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
@@ -23,28 +24,9 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 	);
 
-	for (int i = 0; i < size-20; i+=20)
+	for (int i = 0; i < size-128; i+=128)
 	{
-		temp = arr[i];
-		temp = arr[i+1];
-		temp = arr[i+2];
-		temp = arr[i+3];
-		temp = arr[i+4];
-		temp = arr[i+5];
-		temp = arr[i+6];
-		temp = arr[i+7];
-		temp = arr[i+8];
-		temp = arr[i+9];
-		temp = arr[i+10];
-		temp = arr[i+11];
-		temp = arr[i+12];
-		temp = arr[i+13];
-		temp = arr[i+14];
-		temp = arr[i+15];
-		temp = arr[i+16];
-		temp = arr[i+17];
-		temp = arr[i+18];
-		temp = arr[i+19];
+		bcopy(arr, dst, 128);
 	}
 	
 	asm volatile (
