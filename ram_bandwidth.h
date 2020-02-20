@@ -1,17 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+#include "constants.h"
 
-#define SIZE 1
+#define SIZE 1 // size of array in GB
+#define FREQ 2.4 //processor frequency in GHz
 
+//returns bandwidth in MBPS
 uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 {
 	int size = SIZE * 1024 * 1024 * 1024;
 	char temp;
 	char *arr = (char *) malloc(size);
 
-	clock_t start, end;
-	start = clock();
+	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
+	asm volatile (
+	"CPUID\n\t"
+		"RDTSC\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+	);
 
 	for (int i = 0; i < size-20; i+=20)
 	{
@@ -37,22 +47,37 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 		temp = arr[i+19];
 	}
 	
-	end = clock();
-	double time_taken = ((double)(end-start))/CLOCKS_PER_SEC; 
+	asm volatile (
+		"RDTSCP\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+	"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+	);
+
+	uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+	uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
+	uint64_t total = end - start;
 
 	free(arr);
-	return (uint64_t) (SIZE*1024)/time_taken;
+	
+	return (uint64_t) ((SIZE*1024*FREQ*pow(10, 9))/(double) total);
 }
 
-
+//returns bandwidth in MBPS
 uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 {
 	int size = SIZE * 1024 * 1024 * 1024;
 	char temp = 'x';
 	char *arr = (char *) malloc(size);
 
-	clock_t start, end;
-	start = clock();
+	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
+	asm volatile (
+	"CPUID\n\t"
+		"RDTSC\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+	);
 
 	for (int i = 0; i < size-20; i+=20)
 	{
@@ -78,9 +103,18 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 		arr[i+19] = temp;
 	}
 	
-	end = clock();
-	double time_taken = ((double)(end-start))/CLOCKS_PER_SEC; 
+	asm volatile (
+		"RDTSCP\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+	"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+	);
+
+	uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+	uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
+	uint64_t total = end - start; 
 
 	free(arr);
-	return (uint64_t) (SIZE*1024)/time_taken;
+	
+	return (uint64_t) ((SIZE*1024*FREQ*pow(10, 9))/(double) total);
 }
