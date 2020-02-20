@@ -4,13 +4,13 @@
 #include <math.h>
 #include "constants.h"
 
-#define SIZE 1 // size of array in GB
+#define SIZE 1.0 // size of array in GB
 #define FREQ 2.4 //processor frequency in GHz
 
 //returns bandwidth in MBPS
 uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 {
-	int size = SIZE * 1024 * 1024 * 1024;
+	long size = (long)(SIZE * 1024 * 1024 * 1024);
 	char temp;
 	char *arr = (char *) malloc(size);
 
@@ -67,7 +67,7 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 //returns bandwidth in MBPS
 uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 {
-	int size = SIZE * 1024 * 1024 * 1024;
+	long size = (long)(SIZE * 1024 * 1024 * 1024);
 	char temp = 'x';
 	char *arr = (char *) malloc(size);
 
