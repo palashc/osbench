@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "context_switch.h"
 #include "ram_bandwidth.h"
+#include "mem_tests.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -17,7 +18,8 @@
 #define TRIALS 1000
 #endif
 
-void runTest(ben_ptr ben, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
+void runTest(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
+void runTestQuarantine(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
 
 int main() {
   // runTest(benchmarkCycles, testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
@@ -37,6 +39,28 @@ int main() {
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
   runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
   runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
+
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 300000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 400000, 1024);
+  // run_memoryAccessTest(ITERATIONS, TRIALS, 500000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 600000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 700000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 800000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 900000, 1024);
+  // run_memoryAccessTest(m_benchmarkMeasurementOverhead, ITERATIONS, TRIALS, 1000000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 600000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 700000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 800000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 900000, 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 1000000, 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,20), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,22), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
+  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
+  //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
@@ -54,6 +78,8 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
       iteration_results[j] = benchmark(test);
+
+      fprintf(stderr, "#%d\tFILE DESCRIPTOR SIZE IS: %d\n", i, getdtablesize());
     }
 
     // select median of all iteration tests per trial
@@ -69,4 +95,14 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
 
   printf("Min: %ld\n", stats.min);
   printf("Max: %ld\n", stats.max);
+}
+
+void runTestQuarantine(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+  fprintf(stderr, "First run\n");
+  benchmark(test);
+
+  fprintf(stderr, "Second run\n");
+  benchmark(test);
+
+  fprintf(stderr, "tests completed correctly");
 }
