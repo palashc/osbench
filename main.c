@@ -17,7 +17,8 @@
 #define TRIALS 1000
 #endif
 
-void runTest(ben_ptr ben, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
+void runTest(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
+void runTestQuarantine(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
 
 int main() {
   // runTest(benchmarkCycles, testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
@@ -57,6 +58,7 @@ int main() {
   run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
   run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
   //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
+
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
@@ -74,6 +76,8 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
       iteration_results[j] = benchmark(test);
+
+      fprintf(stderr, "#%d\tFILE DESCRIPTOR SIZE IS: %d\n", i, getdtablesize());
     }
 
     // select median of all iteration tests per trial
@@ -89,4 +93,14 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
 
   printf("Min: %ld\n", stats.min);
   printf("Max: %ld\n", stats.max);
+}
+
+void runTestQuarantine(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+  fprintf(stderr, "First run\n");
+  benchmark(test);
+
+  fprintf(stderr, "Second run\n");
+  benchmark(test);
+
+  fprintf(stderr, "tests completed correctly");
 }
