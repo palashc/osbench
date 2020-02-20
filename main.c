@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "context_switch.h"
 #include "page_fault.h"
+#include "ram_bandwidth.h"
 #include "mem_tests.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
@@ -37,7 +38,9 @@ int main() {
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
-   runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
+  runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
+  runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
+  runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
 
   // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
