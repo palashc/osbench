@@ -16,7 +16,8 @@
 #define TRIALS 1000
 #endif
 
-void runTest(ben_ptr ben, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials);
+void runTest(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
+void runTestQuarantine(ben_ptr, fun_ptr, const char*, uint32_t, uint32_t);
 
 int main() {
   // runTest(benchmarkCycles, testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
@@ -27,13 +28,14 @@ int main() {
   // runTest(benchmarkCycles, testCall4, "Call method with 4 parameters", ITERATIONS, TRIALS);
   // runTest(benchmarkCycles, testCall5, "Call method with 5 parameters", ITERATIONS, TRIALS);
   // runTest(benchmarkCycles, testCall6, "Call method with 6 parameters", ITERATIONS, TRIALS);
-  // runTest(benchmarkCycles, testCall7, "Call method with 7 parameters", ITERATIONS, TRIALS);
+  runTest(benchmarkCycles, testCall7, "Call method with 7 parameters", ITERATIONS, TRIALS);
   // runTest(benchmarkCycles, testSystemCall, "System call: clock_gettime", ITERATIONS, TRIALS);
   // runTest(benchmarkThread, NULL, "System call: test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkThread, NULL, "Test kernel thread", ITERATIONS, TRIALS);
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
-  runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+  // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
 }
 
 void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
@@ -51,6 +53,8 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
   for (int i=0; i < trials; i++) {
     for (int j=0; j< iterations; j++) {
       iteration_results[j] = benchmark(test);
+
+      fprintf(stderr, "#%d\tFILE DESCRIPTOR SIZE IS: %d\n", i, getdtablesize());
     }
 
     // select median of all iteration tests per trial
@@ -66,4 +70,14 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
 
   printf("Min: %ld\n", stats.min);
   printf("Max: %ld\n", stats.max);
+}
+
+void runTestQuarantine(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+  fprintf(stderr, "First run\n");
+  benchmark(test);
+
+  fprintf(stderr, "Second run\n");
+  benchmark(test);
+
+  fprintf(stderr, "tests completed correctly");
 }

@@ -16,4 +16,4 @@ cs:
 #for testing I would use below
 
 test:
-	make ARGS="-DITERATIONS=100 -DTRIALS=10 -DICACHE_HITS=10"
+	make ARGS="-DITERATIONS=1 -DTRIALS=450 -DICACHE_HITS=10"

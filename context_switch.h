@@ -11,46 +11,47 @@
 #include <unistd.h>
 #include "constants.h"
 
-#define SWITCHS 10000
+#define SWITCHS 1000
 
-struct PipeFD {
+typedef struct {
 	int readFD;
 	int writeFD;
-};
+} PipeFd;
 
-struct Pipes {
-	struct PipeFD parentFD;
-	struct PipeFD childFD;
-};
+typedef struct {
+	PipeFd parentFD;
+	PipeFd childFD;
+} Pipes;
 
-struct Pipes getPipes() {
+Pipes getPipes() {
 
-	int parent_child_fd[2];
-	int child_parent_fd[2];
+	int pipe1_fd[2];
+	int pipe2_fd[2];
 
-	pipe(parent_child_fd);
-	pipe(child_parent_fd);
+	pipe(pipe1_fd);
+	pipe(pipe2_fd);
 
-	struct PipeFD parentfd = {
-		.readFD = child_parent_fd[0],
-		.writeFD = parent_child_fd[1]
+	// parent writes to where child reads
+	// child writes to where parent reads
+	PipeFd parentfd = {
+		.readFD = pipe1_fd[0],
+		.writeFD = pipe2_fd[1]
 	};
 
-	struct PipeFD childfd = {
-		.readFD = parent_child_fd[0],
-		.writeFD = child_parent_fd[1]
+	PipeFd childfd = {
+		.readFD = pipe2_fd[0],
+		.writeFD = pipe1_fd[1]
 	};
 
-
-	struct Pipes pipes = {
+	Pipes cs_pipes = {
 		.parentFD = parentfd,
 		.childFD = childfd
 	};
 
-	return pipes;
+	return cs_pipes;
 }
 
-void testContextSwitchTime(struct PipeFD pipefd) {
+void testContextSwitchTime(PipeFd pipefd) {
 
 	char buf[1];
 
@@ -58,18 +59,21 @@ void testContextSwitchTime(struct PipeFD pipefd) {
 	{
 		read(pipefd.readFD, buf, 1);
 		write(pipefd.writeFD, buf, 1);
+		// fprintf(stderr, "process id: %d, finishing switch: %d\n", getpid(), i);
 	}
 }
 
 void* threadStart(void *arg) {
-	struct PipeFD * pipefd = (struct PipeFD *)arg;
+	PipeFd * pipefd = (PipeFd *)arg;
 	testContextSwitchTime(*pipefd);
+		close(pipefd->readFD);
+		close(pipefd->writeFD);
 	return NULL;
 }
 
-uint64_t cs_benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
+uint64_t cs_benchmarkHelper(PipeFd pipefd, pthread_t* childThread) {
 
-	char buf[2] = {'x'};
+	char buf[1] = {'8'};
 	write(pipefd.writeFD, buf, 1);
 
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
@@ -105,22 +109,31 @@ uint64_t cs_benchmarkHelper(struct PipeFD pipefd, pthread_t* childThread) {
 //TODO: check return values of system calls
 uint64_t benchmarkContextSwitchThread(fun_ptr _ignore)
 {
-	struct Pipes pipes = getPipes();
+	Pipes pipes = getPipes();
 
 	pthread_t childThread;
 	pthread_create(&childThread, NULL, threadStart, (void *)&(pipes.childFD));
 
-	return cs_benchmarkHelper(pipes.parentFD, &childThread);
+	uint64_t cycles = cs_benchmarkHelper(pipes.parentFD, &childThread);
+		close(pipes.parentFD.readFD);
+		close(pipes.childFD.writeFD);
+	return cycles;
 }
 
 uint64_t benchmarkContextSwitchProcess(fun_ptr _ignore) {
-	struct Pipes pipes = getPipes();
+	Pipes pipes = getPipes();
 
 	if (fork() == 0) {
 		testContextSwitchTime(pipes.childFD);
+			close(pipes.childFD.readFD);
+			close(pipes.childFD.writeFD);
 		exit(0);
 	}
 	else {
-		return cs_benchmarkHelper(pipes.parentFD, NULL);
+		uint64_t cycles = cs_benchmarkHelper(pipes.parentFD, NULL);
+			close(pipes.parentFD.readFD);
+			close(pipes.childFD.writeFD);
+
+		return cycles;
 	}	
 }
