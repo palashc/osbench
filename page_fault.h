@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 size_t get_file_size(const char *filename) {
 	struct stat st;
@@ -18,7 +19,10 @@ uint64_t benchmark_pf()
 	int fd = open("page_fault.h", O_RDONLY);
 
 	char* addr = mmap(NULL, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);
-
+	
+	srand(time(NULL));
+	int n = rand() % file_size;
+	
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
 	"CPUID\n\t"
@@ -28,7 +32,7 @@ uint64_t benchmark_pf()
 	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 	);
 
-	char first_byte = addr[0];
+	char nth_byte = addr[n];
 
 	asm volatile (
 		"RDTSCP\n\t"
