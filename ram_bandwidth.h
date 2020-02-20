@@ -4,7 +4,7 @@
 #include <math.h>
 #include "constants.h"
 
-#define SIZE 0.5 // size of array in GB
+#define SIZE 1 // size of array in GB
 #define FREQ 2.4 //processor frequency in GHz
 
 //returns bandwidth in MBPS
