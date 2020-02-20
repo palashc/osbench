@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <fcntl.h>
 
 size_t get_file_size(const char *filename) {
 	struct stat st;
@@ -17,7 +18,7 @@ uint64_t benchmark_pf(fun_ptr _ignore)
 
 	size_t file_size = get_file_size("page_fault.h");
 	int fd = open("page_fault.h", O_RDONLY);
-
+	int advice = posix_fadvise(fd, 0, file_size, POSIX_FADV_RANDOM);
 	char* addr = mmap(NULL, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);
 	
 	srand(time(NULL));

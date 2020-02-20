@@ -4,15 +4,15 @@
 #include <math.h>
 #include "constants.h"
 
-#define SIZE 1.0 // size of array in GB
+#define SIZE 1 // size of array in GB
 #define FREQ 2.4 //processor frequency in GHz
 
 //returns bandwidth in MBPS
 uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 {
 	long size = (long)(SIZE * 1024 * 1024 * 1024);
-	char temp;
-	char *arr = (char *) malloc(size);
+	double temp;
+	double *arr = (double *) malloc(size);
 
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
@@ -23,7 +23,7 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 	);
 
-	for (int i = 0; i < size-20; i+=20)
+	for (int i = 0; i < (size/sizeof(double))-16; i+=16)
 	{
 		temp = arr[i];
 		temp = arr[i+1];
@@ -41,10 +41,6 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 		temp = arr[i+13];
 		temp = arr[i+14];
 		temp = arr[i+15];
-		temp = arr[i+16];
-		temp = arr[i+17];
-		temp = arr[i+18];
-		temp = arr[i+19];
 	}
 	
 	asm volatile (
@@ -68,8 +64,8 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 {
 	long size = (long)(SIZE * 1024 * 1024 * 1024);
-	char temp = 'x';
-	char *arr = (char *) malloc(size);
+	double temp = 0.0;
+	double *arr = (double *) malloc(size);
 
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
@@ -80,7 +76,7 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 	"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 	);
 
-	for (int i = 0; i < size-20; i+=20)
+	for (int i = 0; i < (size/sizeof(double))-16; i+=16)
 	{
 		arr[i] = temp;
 		arr[i+1] = temp;
@@ -98,10 +94,6 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 		arr[i+13] = temp;
 		arr[i+14] = temp;
 		arr[i+15] = temp;
-		arr[i+16] = temp;
-		arr[i+17] = temp;
-		arr[i+18] = temp;
-		arr[i+19] = temp;
 	}
 	
 	asm volatile (
