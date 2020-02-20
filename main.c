@@ -6,6 +6,7 @@
 #include "benchmark.h"
 #include "utils.h"
 #include "context_switch.h"
+#include "page_fault.h"
 #include "ram_bandwidth.h"
 #include "mem_tests.h"
 
@@ -37,6 +38,7 @@ int main() {
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
+  runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
   runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
   runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
 
