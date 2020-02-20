@@ -1,3 +1,5 @@
+Run with `taskset -c 1 nice -20 ./test.out`
+
 ## Benchmarking tests
 We run the cpu-tests on a single thread in a single process. Thus, they run on a single core.
 
