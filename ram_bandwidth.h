@@ -13,6 +13,7 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 	long size = (long)(SIZE * 1024 * 1024 * 1024);
 	double temp;
 	double *arr = (double *) malloc(size);
+	posix_memalign(&arr, 128, size);
 
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
 	asm volatile (
