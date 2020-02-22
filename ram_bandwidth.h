@@ -11,23 +11,31 @@
 //returns bandwidth in MBPS
 uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 {
-	long size = (long)(SIZE * 1024 * 1024);
-	int temp = 0.0;
+	int size = (SIZE * 1024 * 1024);
+	int temp = 0;
+
+	int arrlen = size / sizeof(int);
 	int *arr = (int *) malloc(size);
+
 	uint64_t bw = 0;
+
+	#pragma omp parallel for collapse
 	for (int i=0; i<ITER; i++) {
 		uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
-		asm volatile (
-		"CPUID\n\t"
-			"RDTSC\n\t"
-			"mov %%edx, %0\n\t"
-			"mov %%eax, %1\n\t": "=r" (cycles_high0), 
-		"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
-		);
+		#pragma omp barrier
+		#pragma omp master
+		{
+			asm volatile (
+			"CPUID\n\t"
+				"RDTSC\n\t"
+				"mov %%edx, %0\n\t"
+				"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+			"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+			);
+		}
 
-		for (int i = 0; i < (size/sizeof(double))-480; i+=480)
+		for (int i = 0; i < arrlen-480; i+=480)
 		{	
-
 			temp += arr[i];
 			temp += arr[i+16];
 			temp += arr[i+32];
@@ -58,20 +66,22 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 			temp += arr[i+432];
 			temp += arr[i+448];
 			temp += arr[i+464];
-		
 		}
-		
-		asm volatile (
-			"RDTSCP\n\t"
-			"mov %%edx, %0\n\t"
-			"mov %%eax, %1\n\t": "=r" (cycles_high1), 
-		"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
-		);
+		#pragma omp barrier
+		#pragma omp master 
+		{
+			asm volatile (
+				"RDTSCP\n\t"
+				"mov %%edx, %0\n\t"
+				"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+			"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+			);
 
-		long start = ((long)cycles_high0 << 32) | cycles_low0;
-		long end = ((long)cycles_high1 << 32) | cycles_low1;
-		long total = end - start;
-		bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
+			long start = ((long)cycles_high0 << 32) | cycles_low0;
+			long end = ((long)cycles_high1 << 32) | cycles_low1;
+			long total = end - start;
+			bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
+		}
 	}
 
 	free(arr);
@@ -81,21 +91,30 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 //returns bandwidth in MBPS
 uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 {
-	long size = (long)(SIZE * 1024 * 1024);
-	int temp = 1;
+	int size = (SIZE * 1024 * 1024);
+	int temp = 0;
+
+	int arrlen = size / sizeof(int);
 	int *arr = (int *) malloc(size);
+
 	uint64_t bw = 0;
+
+	#pragma omp parallel for collapse
 	for (int i=0; i<ITER; i++) {
 		uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
-		asm volatile (
-		"CPUID\n\t"
-			"RDTSC\n\t"
-			"mov %%edx, %0\n\t"
-			"mov %%eax, %1\n\t": "=r" (cycles_high0), 
-		"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
-		);
+		#pragma omp barrier
+		#pragma omp master
+		{
+			asm volatile (
+			"CPUID\n\t"
+				"RDTSC\n\t"
+				"mov %%edx, %0\n\t"
+				"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+			"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+			);
+		}
 
-		for (int i = 0; i < (size/sizeof(double))-480; i+=480)
+		for (int i = 0; i < (size/sizeof(int))-480; i+=480)
 		{	
 
 			arr[i] = temp;
@@ -128,20 +147,22 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 			arr[i+432] = temp;
 			arr[i+448] = temp;
 			arr[i+464] = temp;
-		
 		}
-		
-		asm volatile (
-			"RDTSCP\n\t"
-			"mov %%edx, %0\n\t"
-			"mov %%eax, %1\n\t": "=r" (cycles_high1), 
-		"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
-		);
+		#pragma omp barrier
+		#pragma omp master 
+		{
+			asm volatile (
+				"RDTSCP\n\t"
+				"mov %%edx, %0\n\t"
+				"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+			"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+			);
 
-		long start = ((long)cycles_high0 << 32) | cycles_low0;
-		long end = ((long)cycles_high1 << 32) | cycles_low1;
-		long total = end - start;
-		bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
+			long start = ((long)cycles_high0 << 32) | cycles_low0;
+			long end = ((long)cycles_high1 << 32) | cycles_low1;
+			long total = end - start;
+			bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
+		}
 	}
 
 	free(arr);

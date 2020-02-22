@@ -25,5 +25,5 @@ const uint32_t MEASUREMENT_OVERHEAD = 40;
 #if !defined(ICACHE_HITS)
     // empirically tested number of consecutive function calls for a function
     // pointer to be in I_CACHE
-    const uint32_t ICACHE_HITS = 10000000;
+    const uint32_t ICACHE_HITS = 0;
 #endif
