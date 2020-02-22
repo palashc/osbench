@@ -15,16 +15,19 @@ size_t get_file_size(const char *filename) {
 
 uint64_t benchmark_pf(fun_ptr _ignore)
 {
+	const char* FILENAME = "tmp";
 
-	size_t file_size = get_file_size("page_fault.h");
-	int fd = open("page_fault.h", O_RDONLY);
-	int advice = posix_fadvise(fd, 0, file_size, POSIX_FADV_RANDOM);
-	char* addr = mmap(NULL, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);
+	size_t file_size = get_file_size(FILENAME);
+	int fd = open(FILENAME, O_RDONLY);
+
+	int advice = posix_fadvise(fd, 0, file_size, __POSIX_FADV_DONTNEED);
+	char* addr = mmap(NULL, file_size, PROT_READ|PROT_WRITE, MAP_FILE|MAP_PRIVATE, fd, 0);
 	
 	srand(time(NULL));
 	int n = rand() % file_size;
 	
 	uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
+	
 	asm volatile (
 	"CPUID\n\t"
 		"RDTSC\n\t"

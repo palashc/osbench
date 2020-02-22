@@ -54,6 +54,28 @@ extern benchmark_stats fill_stats(uint64_t* arr, uint32_t siz) {
   return stats;
 }
 
+extern uint64_t benchmarkEmpty(fun_ptr test) {
+  uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
+  asm volatile (
+    "CPUID\n\t"
+		"RDTSC\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high0), 
+    "=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
+  );
+  
+	asm volatile (
+		"RDTSCP\n\t"
+		"mov %%edx, %0\n\t"
+		"mov %%eax, %1\n\t": "=r" (cycles_high1), 
+    "=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
+  );
+
+  uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+  uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
+
+  return end-start;
+}
 
 extern uint64_t benchmarkCycles(fun_ptr test) {
   uint32_t cycles_high0, cycles_low0, cycles_low1, cycles_high1;
