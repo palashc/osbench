@@ -9,6 +9,7 @@
 #include "page_fault.h"
 #include "ram_bandwidth.h"
 #include "mem_tests.h"
+#include "tcp_connect.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -38,10 +39,10 @@ int main() {
   // runTest(benchmarkFork, NULL, "Test fork thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchThread, NULL, "Context Switch Thread", ITERATIONS, TRIALS);
   // runTest(benchmarkContextSwitchProcess, NULL, "Context switch Process", ITERATIONS, TRIALS);
-  runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
-  runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
-  runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
-
+  // runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
+  // runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
+  // runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
+  benchmarkConntectionOverhead();
   // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 300000, 1024);
@@ -57,11 +58,11 @@ int main() {
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 800000, 1024);
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 900000, 1024);
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, 1000000, 1024);
-  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,20), 1024);
-  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21), 1024);
-  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,22), 1024);
-  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
-  run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,20), 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21), 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,22), 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
+  // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
   //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
 }
 
@@ -81,7 +82,7 @@ void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterati
     for (int j=0; j< iterations; j++) {
       iteration_results[j] = benchmark(test);
 
-      fprintf(stderr, "#%d\tFILE DESCRIPTOR SIZE IS: %d\n", i, getdtablesize());
+      // fprintf(stderr, "#%d\tFILE DESCRIPTOR SIZE IS: %d\n", i, getdtablesize());
     }
 
     // select median of all iteration tests per trial
