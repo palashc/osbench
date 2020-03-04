@@ -55,7 +55,7 @@ uint64_t benchmarkContention(int num_processes)
 
 	killJobs();
 	
-	return (uint64_t) total_cycles / ITER;
+	return (uint64_t) total_cycles / ITERS;
 }
 uint64_t benchmarkContention0() { benchmarkContention(0); }
 uint64_t benchmarkContention1() { benchmarkContention(1); }
