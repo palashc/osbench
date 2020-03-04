@@ -40,6 +40,7 @@ void readFile(int num) {
 
 void startBackgroundJobs(int num_processes)
 {
+
 	pids  = (pid_t *)malloc(num_processes * sizeof(pid_t));
 
 	for (int i = 0; i < num_processes; ++i)

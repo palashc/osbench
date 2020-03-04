@@ -33,16 +33,18 @@ uint64_t rdtsc() {
 
 uint64_t benchmarkContention(int num_processes)
 {
+
 	const char* filename = "contention_test.txt";
 	size_t filesize = _get_file_size(filename);
 	int fd = open(filename, O_RDONLY);
 	int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
-
 	char *readBuf = (char *)malloc(BLOCKSIZE);
 	uint64_t total_cycles = 0;
 	uint64_t start_t, end_t;
 
-	startBackgroundJobs(num_processes);
+	if (num_processes > 0) 	{
+		startBackgroundJobs(num_processes);
+	}
 
 	for (int i = 0; i < ITERS; ++i)
 	{	
@@ -53,18 +55,20 @@ uint64_t benchmarkContention(int num_processes)
 		lseek(fd, 0, SEEK_SET);
 	}
 
-	killJobs();
-	
+	if (num_processes > 0) {
+		killJobs();
+	}
+
 	return (uint64_t) total_cycles / ITERS;
 }
-uint64_t benchmarkContention0() { benchmarkContention(0); }
-uint64_t benchmarkContention1() { benchmarkContention(1); }
-uint64_t benchmarkContention2() { benchmarkContention(2); }
-uint64_t benchmarkContention3() { benchmarkContention(3); }
-uint64_t benchmarkContention4() { benchmarkContention(4); }
-uint64_t benchmarkContention5() { benchmarkContention(5); }
-uint64_t benchmarkContention6() { benchmarkContention(6); }
-uint64_t benchmarkContention7() { benchmarkContention(7); }
-uint64_t benchmarkContention8() { benchmarkContention(8); }
-uint64_t benchmarkContention9() { benchmarkContention(9); }
-uint64_t benchmarkContention10() { benchmarkContention(10); }
+uint64_t benchmarkContention0(fun_ptr _ignore) { return benchmarkContention(0); }
+uint64_t benchmarkContention1(fun_ptr _ignore) { return benchmarkContention(1); }
+uint64_t benchmarkContention2(fun_ptr _ignore) { return benchmarkContention(2); }
+uint64_t benchmarkContention3(fun_ptr _ignore) { return benchmarkContention(3); }
+uint64_t benchmarkContention4(fun_ptr _ignore) { return benchmarkContention(4); }
+uint64_t benchmarkContention5(fun_ptr _ignore) { return benchmarkContention(5); }
+uint64_t benchmarkContention6(fun_ptr _ignore) { return benchmarkContention(6); }
+uint64_t benchmarkContention7(fun_ptr _ignore) { return benchmarkContention(7); }
+uint64_t benchmarkContention8(fun_ptr _ignore) { return benchmarkContention(8); }
+uint64_t benchmarkContention9(fun_ptr _ignore) { return benchmarkContention(9); }
+uint64_t benchmarkContention10(fun_ptr _ignore) { return benchmarkContention(10); }
