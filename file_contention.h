@@ -12,7 +12,9 @@
 void runContention(const int PROCESS_COUNT) {
 
 	int* childPIDs = malloc(PROCESS_COUNT * sizeof(int));
-	char buffer[BLOCK_SIZE] = {0};
+	char *buffer = malloc(BLOCK_SIZE);
+	posix_memalign(&buffer, BLOCK_SIZE, BLOCK_SIZE);
+
 	char testname[50] = {0};
 	char filename[50] = {0};
 
