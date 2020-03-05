@@ -42,10 +42,8 @@ int main() {
   // runTest(benchmark_pf, NULL, "Page Fault access time + RAM access time", ITERATIONS, TRIALS); 
   // runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
   // runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
-  int arr = diskReadSeq(ITERATIONS);
-  printf("%d\n", arr);
-  printf("Done\n");
-  
+
+  runDiskReadTests(ITERATIONS, TRIALS);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 300000, 1024);

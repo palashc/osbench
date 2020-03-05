@@ -12,14 +12,13 @@ uint64_t diskReadSeq(int length){
 	uint64_t arr[length];
 	int offset = 0;
 	int data;
-	int fd = open("/dev/sda1", O_RDONLY | __O_DIRECT);
-	printf("%x\n", fd);
+	int fd = open("/dev/sda1", 'r' |'b' | O_RDONLY | __O_DIRECT);
 	if(fd <= 0){
 		printf("File not opened \n");
 		return -1;
 	}
 	void * sector =  malloc(BLOCKSIZE);
-	int aligned = posix_memalign(sector, BLOCKSIZE, BLOCKSIZE);
+	int aligned = posix_memalign(&sector, BLOCKSIZE, BLOCKSIZE);
 	if(aligned != 0){
 		printf("Memeory not aligned\n");
 		return -1; 
@@ -44,7 +43,7 @@ uint64_t diskReadSeq(int length){
 	    );
 
 		if(data < 0)
-			printf("data not read, read returned %d at offset = %d at sector = %d with error=%s\n", data, offset, i, strerror(errno));
+			printf("data not read from filepointer %d, read returned %d at offset = %d at sector = %d with error=%s\n", fd, data, offset, i, strerror(errno));
 		uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
   		uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
   		arr[i] = end - start;
@@ -52,4 +51,20 @@ uint64_t diskReadSeq(int length){
 	free(sector);
 	close(fd);
 	return median(arr, length);
+}
+
+void runDiskReadTests(int iterations, int trials){
+  uint64_t trial_results[trials];
+  for(int i = 0; i < trials; i++){
+  	trial_results[i] = diskReadSeq(iterations);
+  }
+  benchmark_stats stats = fill_stats(trial_results, trials);
+  printf("Testing %s\n", "Disk read seq:");
+  printf("%d Trials of %d Iterations\n", trials, iterations);
+  printf("Mean: %f\n", stats.mean);
+  printf("Median: %ld\n", stats.median);
+  printf("StDev: %f\n", stats.stdev);
+
+  printf("Min: %ld\n", stats.min);
+  printf("Max: %ld\n", stats.max);
 }
