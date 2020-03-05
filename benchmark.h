@@ -156,3 +156,114 @@ extern uint64_t benchmarkThread(fun_ptr _ignore) {
 
   return end-start;
 }
+
+void runTest(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+
+  uint64_t trial_results[trials];
+  uint64_t iteration_results[iterations];
+
+  // First, warm up I-Cache with 10,000,000 calls.
+  // MUST disable gcc optimizations for this to work
+  for (int i = 0; i < ICACHE_HITS; i++) {
+    benchmark(test);
+  }
+
+  // begin benchmark tests
+  for (int i=0; i < trials; i++) {
+    for (int j=0; j< iterations; j++) {
+      iteration_results[j] = benchmark(test);
+    }
+
+    // select median of all iteration tests per trial
+    trial_results[i] = median(iteration_results, iterations);
+  }
+
+  benchmark_stats stats = fill_stats(trial_results, trials);
+  printf("Testing %s\n", name);
+  printf("%d Trials of %d Iterations\n", trials, iterations);
+  printf("Mean: %f\n", stats.mean);
+  printf("Median: %ld\n", stats.median);
+  printf("StDev: %f\n", stats.stdev);
+
+  printf("Min: %ld\n", stats.min);
+  printf("Max: %ld\n", stats.max);
+  printf("\n");
+}
+
+extern void runTestQuarantine(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials) {
+  fprintf(stderr, "First run\n");
+  benchmark(test);
+
+  fprintf(stderr, "Second run\n");
+  benchmark(test);
+
+  fprintf(stderr, "tests completed correctly");
+}
+
+void runTestMod(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials, mod_ptr mod) {
+
+  uint64_t trial_results[trials];
+  uint64_t iteration_results[iterations];
+
+  // First, warm up I-Cache with 10,000,000 calls.
+  // MUST disable gcc optimizations for this to work
+  for (int i = 0; i < ICACHE_HITS; i++) {
+    benchmark(test);
+  }
+
+  // begin benchmark tests
+  for (int i=0; i < trials; i++) {
+    for (int j=0; j< iterations; j++) {
+      iteration_results[j] = mod(benchmark(test));
+    }
+
+    // select median of all iteration tests per trial
+    trial_results[i] = median(iteration_results, iterations);
+  }
+
+  benchmark_stats stats = fill_stats(trial_results, trials);
+  printf("Testing %s\n", name);
+  printf("%d Trials of %d Iterations\n", trials, iterations);
+  printf("Mean: %f\n", stats.mean);
+  printf("Median: %ld\n", stats.median);
+  printf("StDev: %f\n", stats.stdev);
+
+  printf("Min: %ld\n", stats.min);
+  printf("Max: %ld\n", stats.max);
+  printf("\n");
+}
+
+void runTestSetup(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t iterations, uint32_t trials, fun_ptr setup) {
+
+  uint64_t trial_results[trials];
+  uint64_t iteration_results[iterations];
+
+  // First, warm up I-Cache with 10,000,000 calls.
+  // MUST disable gcc optimizations for this to work
+  for (int i = 0; i < 100000; i++) {
+    setup();
+    benchmark(test);
+  }
+
+  // begin benchmark tests
+  for (int i=0; i < trials; i++) {
+    for (int j=0; j< iterations; j++) {
+      setup();
+      iteration_results[j] = benchmark(test);
+    }
+
+    // select median of all iteration tests per trial
+    trial_results[i] = median(iteration_results, iterations);
+  }
+
+  benchmark_stats stats = fill_stats(trial_results, trials);
+  printf("Testing %s\n", name);
+  printf("%d Trials of %d Iterations\n", trials, iterations);
+  printf("Mean: %f\n", stats.mean);
+  printf("Median: %ld\n", stats.median);
+  printf("StDev: %f\n", stats.stdev);
+
+  printf("Min: %ld\n", stats.min);
+  printf("Max: %ld\n", stats.max);
+  printf("\n");
+}

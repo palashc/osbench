@@ -9,7 +9,7 @@
 #define BLOCK_SIZE 4096
 
 void runContention(const int PROCESS_COUNT) {
-	int fd = open("fs/64m.o", "r");
+	int fd = open("fs/64m.o", 'r');
 
 	long filesize = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);

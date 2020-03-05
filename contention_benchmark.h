@@ -34,7 +34,7 @@ uint64_t rdtsc() {
 uint64_t benchmarkContention(int num_processes)
 {
 
-	const char* filename = "contention_test.txt";
+	const char* filename = "fs/64m.o";
 	size_t filesize = _get_file_size(filename);
 	int fd = open(filename, O_RDONLY);
 	int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
