@@ -10,17 +10,11 @@
 #define BLOCK_SIZE 4096
 
 void runContention(const int PROCESS_COUNT) {
-	int fd = open("fs/64m.o", 'r' | O_RDWR | O_SYNC | __O_DIRECT);
-
-	long filesize = lseek(fd, 0, SEEK_END);
-	lseek(fd, 0, SEEK_SET);
-
-	// we will only ever access first block of file. We advise that first two blocks don't need to be cached
-	int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
 
 	int* childPIDs = malloc(PROCESS_COUNT * sizeof(int));
 	char buffer[BLOCK_SIZE] = {0};
 	char testname[50] = {0};
+	char filename[50] = {0};
 
 	// contend for a block. We run a total of i processes
 	// including parent process
@@ -28,18 +22,35 @@ void runContention(const int PROCESS_COUNT) {
 		childPIDs[i] = fork();
 		if (childPIDs[i] == 0) {
 			// only terminate from a kill signal
+			sprintf(filename, "fs/%d.txt", i);
+			int fd = open(filename, 'r' | O_RDWR | O_SYNC | __O_DIRECT);
+
+			long filesize = lseek(fd, 0, SEEK_END);
+			lseek(fd, 0, SEEK_SET);
+
+			// we will only ever access first block of file. We advise that first two blocks don't need to be cached
+			int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
+
 			while(1) {
 				lseek(fd, 0, SEEK_SET);
-				read(fd, buffer, BLOCK_SIZE);
+				// loop through the entire file
+				while(read(fd, buffer, BLOCK_SIZE) == BLOCK_SIZE);
 			}
 		}
 	}
 
+	int fd = open("fs/contention_test.txt", 'r' | O_RDWR | O_SYNC | __O_DIRECT);
+	long filesize = lseek(fd, 0, SEEK_END);
+	lseek(fd, 0, SEEK_SET);
+
+	// we will only ever access first block of file. We advise that first two blocks don't need to be cached
+	int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
+
 	void setup() {
-		// we seek to beginning of file and free the page cache
-		// system("sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'");
-		// fprintf(stderr, "setting up\n");
-		lseek(fd, 0, SEEK_SET);
+		// we always try reading a new blocksize
+		if (lseek(fd, 0, SEEK_CUR) + BLOCK_SIZE > filesize) {
+			lseek(fd, 0, SEEK_SET);
+		}
 	};
 	void test() {
 		read(fd, buffer, BLOCK_SIZE);
@@ -47,10 +58,10 @@ void runContention(const int PROCESS_COUNT) {
 
 	sprintf(testname, "Block access time contending with %d processes", PROCESS_COUNT);
 
-	runTestSetup(benchmarkCycles, test, testname, 1, 1000, setup);
+	runTestSetup(benchmarkCycles, test, testname, 1, 100000, setup);
 
 	for (int i=1; i< PROCESS_COUNT; i++) {
-		fprintf(stderr, "Killing %d/%d pid: %d\n", i, PROCESS_COUNT, childPIDs[i]);
+		// fprintf(stderr, "Killing %d/%d pid: %d\n", i, PROCESS_COUNT, childPIDs[i]);
 		kill(childPIDs[i], SIGKILL);
 	}
 
