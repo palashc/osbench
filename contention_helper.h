@@ -15,6 +15,7 @@
 #define BLOCKSIZE 4096
 
 pid_t *pids = NULL;
+int NUM = 0;
 
 size_t _get_file_size(const char *filename) {
 	struct stat st;
@@ -40,7 +41,7 @@ void readFile(int num) {
 
 void startBackgroundJobs(int num_processes)
 {
-
+	NUM = num_processes;
 	pids  = (pid_t *)malloc(num_processes * sizeof(pid_t));
 
 	for (int i = 0; i < num_processes; ++i)
@@ -56,7 +57,10 @@ void startBackgroundJobs(int num_processes)
 }
 
 void killJobs() {
-	for (int i=0; i<sizeof(pids)/sizeof(pid_t); i++) {
+	for (int i=0; i<sizeof(pid_t)*NUM/sizeof(pid_t); i++) {
+	//	printf("Killing process %d PID: %d", i, (int)pids[i]);
 		kill(pids[i], SIGKILL);
 	}
+	free(pids);
+	NUM = 0;
 }
