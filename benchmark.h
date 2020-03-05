@@ -240,7 +240,7 @@ void runTestSetup(ben_ptr benchmark, fun_ptr test, const char* name, uint32_t it
 
   // First, warm up I-Cache with 10,000,000 calls.
   // MUST disable gcc optimizations for this to work
-  for (int i = 0; i < 100000; i++) {
+  for (int i = 0; i < ICACHE_HITS; i++) {
     setup();
     benchmark(test);
   }

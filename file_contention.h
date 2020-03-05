@@ -5,11 +5,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <stdlib.h>
 
 #define BLOCK_SIZE 4096
 
 void runContention(const int PROCESS_COUNT) {
-	int fd = open("fs/64m.o", 'r');
+	int fd = open("fs/64m.o", 'r' | O_RDWR | O_SYNC | __O_DIRECT);
 
 	long filesize = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
@@ -35,6 +36,9 @@ void runContention(const int PROCESS_COUNT) {
 	}
 
 	void setup() {
+		// we seek to beginning of file and free the page cache
+		// system("sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'");
+		// fprintf(stderr, "setting up\n");
 		lseek(fd, 0, SEEK_SET);
 	};
 	void test() {
@@ -43,7 +47,7 @@ void runContention(const int PROCESS_COUNT) {
 
 	sprintf(testname, "Block access time contending with %d processes", PROCESS_COUNT);
 
-	runTestSetup(benchmarkCycles, test, testname, 1, 1000000, setup);
+	runTestSetup(benchmarkCycles, test, testname, 1, 1000, setup);
 
 	for (int i=1; i< PROCESS_COUNT; i++) {
 		fprintf(stderr, "Killing %d/%d pid: %d\n", i, PROCESS_COUNT, childPIDs[i]);

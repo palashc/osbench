@@ -9,7 +9,6 @@
 #include "page_fault.h"
 #include "ram_bandwidth.h"
 #include "mem_tests.h"
-#include "contention_benchmark.h"
 #include "file_contention.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
