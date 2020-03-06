@@ -43,7 +43,9 @@ int main() {
   // runTest(benchmarkReadRamBandwidth, NULL, "RAM Bandwidth read", ITERATIONS, TRIALS);
   // runTest(benchmarkWriteRamBandwidth, NULL, "RAM Bandwidth write", ITERATIONS, TRIALS);
 
-  runDiskReadTests(ITERATIONS, TRIALS);
+  runDiskReadTests(ITERATIONS, TRIALS, 10);
+  runDiskReadTestsRand(ITERATIONS, TRIALS, 10);
+
   // run_memoryAccessTest(ITERATIONS, TRIALS, 100000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 200000, 1024);
   // run_memoryAccessTest(ITERATIONS, TRIALS, 300000, 1024);
