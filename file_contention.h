@@ -7,6 +7,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
+#include <errno.h>
+
 #define BLOCK_SIZE 4096
 
 void runContention(const int PROCESS_COUNT) {
@@ -28,39 +30,45 @@ void runContention(const int PROCESS_COUNT) {
 			int fd = open(filename, 'r' | O_RDWR | O_SYNC | __O_DIRECT);
 
 			long filesize = lseek(fd, 0, SEEK_END);
+			long blockcount = filesize/BLOCK_SIZE;
 			lseek(fd, 0, SEEK_SET);
 
 			// we will only ever access first block of file. We advise that first two blocks don't need to be cached
 			int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
 
 			while(1) {
-				lseek(fd, 0, SEEK_SET);
-				// loop through the entire file
-				while(read(fd, buffer, BLOCK_SIZE) == BLOCK_SIZE);
+				// read random location
+				int setTo = (rand() % (blockcount - 1))*BLOCK_SIZE;
+				lseek(fd, setTo, SEEK_SET);
+				// read file location
+				read(fd, buffer, BLOCK_SIZE);
 			}
 		}
 	}
 
-	int fd = open("fs/contention_test.txt", 'r' | O_RDWR | O_SYNC | __O_DIRECT);
+	int fd = open("fs/49.txt", O_RDWR | O_SYNC | __O_DIRECT);
 	long filesize = lseek(fd, 0, SEEK_END);
+	long blockCount = filesize / BLOCK_SIZE;
+
 	lseek(fd, 0, SEEK_SET);
+
+	fprintf(stderr, "file size is %ld\n", filesize);
 
 	// we will only ever access first block of file. We advise that first two blocks don't need to be cached
 	int advice = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
 
 	void setup() {
-		// we always try reading a new blocksize
-		if (lseek(fd, 0, SEEK_CUR) + BLOCK_SIZE > filesize) {
-			lseek(fd, 0, SEEK_SET);
-		}
+		// read random location
+		int setTo = (rand() % (blockCount - 1))*BLOCK_SIZE;
+		lseek(fd, setTo, SEEK_SET);
 	};
 	void test() {
 		read(fd, buffer, BLOCK_SIZE);
 	};
 
 	sprintf(testname, "Block access time contending with %d processes", PROCESS_COUNT);
-
-	runTestSetup(benchmarkCycles, test, testname, 1, 100000, setup);
+	sleep(2);
+	runTestSetup(benchmarkCycles, test, testname, 1, 10000, setup);
 
 	for (int i=1; i< PROCESS_COUNT; i++) {
 		// fprintf(stderr, "Killing %d/%d pid: %d\n", i, PROCESS_COUNT, childPIDs[i]);

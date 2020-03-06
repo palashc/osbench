@@ -56,4 +56,9 @@ int main() {
   runContention(30);
   runContention(40);
   runContention(50);
+  runContention(60);
+  runContention(70);
+  runContention(80);
+  runContention(90);
+  runContention(100);
 }
