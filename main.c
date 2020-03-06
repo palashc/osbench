@@ -10,7 +10,7 @@
 #include "ram_bandwidth.h"
 #include "mem_tests.h"
 #include "file_cache.h"
-#include "file_contention.h"
+// #include "file_contention.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
@@ -62,7 +62,7 @@ int main() {
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
   //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
-  // run_fileCache();
+  run_fileCache();
   // runContention(1);
   // runContention(2);
   // runContention(3);

@@ -6,7 +6,6 @@
 #include "benchmark.h"
 
 #define BLOCK_SIZE 4096
-#define FILE_NUM 1
 
 const long MB = 1024*1024;
 const long GB = 1024*1024*1024;
@@ -18,14 +17,17 @@ const long GB = 1024*1024*1024;
 // };
 
 const char* FILES[] = {
-	"fs/10g.o", "fs/11g.o"
+	"fs/128m.o", "fs/7g.o", "fs/13g.o", "fs/15g.o", 
 };
+#define FILE_NUM 3
 
 void run_fileCache() {
 
 	const int iterations = 10;
 	const int cache_iterations = 10;
-	char blockbuf[BLOCK_SIZE] = {0};
+	char *blockbuf = malloc(BLOCK_SIZE);
+	posix_memalign(&blockbuf, BLOCK_SIZE, BLOCK_SIZE);
+
 	char testname[50] = {0};
 
 	for (int i = 0; i < FILE_NUM; i++) {
@@ -40,6 +42,7 @@ void run_fileCache() {
 			// bring file pointer to the top
 			fseek(fd, 0, SEEK_SET);
 			while (fread(blockbuf, sizeof(char), BLOCK_SIZE, fd) == BLOCK_SIZE);
+			printf("not ok");
 		};
 
 		// perform operation on the cycles returned
