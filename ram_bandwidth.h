@@ -6,7 +6,7 @@
 
 #define SIZE 64 // size of array in MB
 #define FREQ 2.9 //processor frequency in GHz
-#define ITER 10000
+#define ITER 1000
 
 //returns bandwidth in MBPS
 uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
@@ -25,7 +25,7 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 		"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 		);
 
-		for (int i = 0; i < (size/sizeof(double))-480; i+=480)
+		for (int i = 0; i < (size/sizeof(int))-480; i+=480)
 		{	
 
 			temp += arr[i];
@@ -68,9 +68,9 @@ uint64_t benchmarkReadRamBandwidth(fun_ptr _ignore)
 		"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
 		);
 
-		long start = ((long)cycles_high0 << 32) | cycles_low0;
-		long end = ((long)cycles_high1 << 32) | cycles_low1;
-		long total = end - start;
+		uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+		uint64_t end = ((long)cycles_high1 << 32) | cycles_low1;
+		uint64_t total = end - start;
 		bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
 	}
 
@@ -95,7 +95,7 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 		"=r" (cycles_low0)::"rax", "%rbx", "%rcx", "%rdx"
 		);
 
-		for (int i = 0; i < (size/sizeof(double))-480; i+=480)
+		for (int i = 0; i < (size/sizeof(int))-480; i+=480)
 		{	
 
 			arr[i] = temp;
@@ -138,9 +138,9 @@ uint64_t benchmarkWriteRamBandwidth(fun_ptr _ignore)
 		"=r" (cycles_low1)::"rax", "%rbx", "%rcx", "%rdx"
 		);
 
-		long start = ((long)cycles_high0 << 32) | cycles_low0;
-		long end = ((long)cycles_high1 << 32) | cycles_low1;
-		long total = end - start;
+		uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
+		uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
+		uint64_t total = end - start;
 		bw += (uint64_t)((SIZE*FREQ*pow(10, 9))/total);
 	}
 
