@@ -10,11 +10,11 @@
 #include "ram_bandwidth.h"
 #include "mem_tests.h"
 #include "file_cache.h"
-// #include "file_contention.h"
+#include "file_contention.h"
 
 // 10000 iterations empirically adds the test's instruction address in the I-Cache
 #if !defined(ITERATIONS)
-#define ITERATIONS 100000 //for testing change to 10
+#define ITERATIONS 1 //for testing change to 10
 #endif
 
 #if !defined(TRIALS)
