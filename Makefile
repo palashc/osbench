@@ -1,6 +1,6 @@
 MY_OPT = -g -O0  
 LIBS = -lm -pthread
-default: main.c constants.h benchmark.h cpu_tests.h context_switch.h mem_tests.h file_contention.h
+default: main.c constants.h benchmark.h cpu_tests.h context_switch.h mem_tests.h file_cache.h file_contention.h
 	gcc $(MY_OPT) -o test.out main.c $(LIBS) $(ARGS) 
 clean: 
 	rm -f *.out
