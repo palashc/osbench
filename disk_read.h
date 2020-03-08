@@ -95,7 +95,7 @@ uint64_t diskReadRand(int iterations, int filesize){
 	for(int j = 0; j < iterations; j++){
 		sum = 0;
 		for(int i = 0; i < filesize; i++){
-					offset = (rand() % 51) * 1024;
+					offset = (rand() % 5000) * 1024;
 
 			lseek(fd, offset, SEEK_SET);
 			asm volatile (
