@@ -28,3 +28,12 @@ const uint32_t MEASUREMENT_OVERHEAD = 40;
     // pointer to be in I_CACHE
     const uint32_t ICACHE_HITS = 10;
 #endif
+
+// 10000 iterations empirically adds the test's instruction address in the I-Cache
+#if !defined(ITERATIONS)
+#define ITERATIONS 1 //for testing change to 10
+#endif
+
+#if !defined(TRIALS)
+#define TRIALS 1000
+#endif

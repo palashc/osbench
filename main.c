@@ -11,15 +11,7 @@
 #include "mem_tests.h"
 #include "file_cache.h"
 #include "file_contention.h"
-
-// 10000 iterations empirically adds the test's instruction address in the I-Cache
-#if !defined(ITERATIONS)
-#define ITERATIONS 1 //for testing change to 10
-#endif
-
-#if !defined(TRIALS)
-#define TRIALS 1000
-#endif
+#include "disk_read.h"
 
 int main() {
   // runTest(benchmarkCycles, testMeasurementOverhead, "Measurement Overhead", ITERATIONS, TRIALS);
@@ -62,7 +54,8 @@ int main() {
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,21) + pow(2,22), 1024);
   // run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, pow(2,23), 1024);
   //run_memoryAccessTest(m_benchmarkAccessTime, ITERATIONS, TRIALS, , 1024);
-  run_fileCache();
+  // run_fileCache();
+  // runContention(1);
   // runContention(1);
   // runContention(2);
   // runContention(3);
@@ -78,4 +71,39 @@ int main() {
   // runContention(40);
   // runContention(50);
   // runContention(60);
+  // readFile("fs/4.txt");
+  // readFileRand("fs/4.txt", 1, 1);
+
+  readFileSeq("fs-remote/4.txt", 10, 1);
+  readFileSeq("fs-remote/5.txt", 10, 1);
+  readFileSeq("fs-remote/6.txt", 10, 1);
+  readFileSeq("fs-remote/7.txt", 10, 1);
+  readFileSeq("fs-remote/8.txt", 10, 1);
+  readFileSeq("fs-remote/9.txt", 10, 1);
+  readFileSeq("fs-remote/10.txt", 10, 1);
+
+  readFileRand("fs-remote/4.txt", 10, 1);
+  readFileRand("fs-remote/5.txt", 10, 1);
+  readFileRand("fs-remote/6.txt", 10, 1);
+  readFileRand("fs-remote/7.txt", 10, 1);
+  readFileRand("fs-remote/8.txt", 10, 1);
+  readFileRand("fs-remote/9.txt", 10, 1);
+  readFileRand("fs-remote/10.txt", 10, 1);
+
+
+  // readFile("fs-remote/4.txt", 100, 1);
+  // readFile("fs-remote/5.txt", 80, 1);
+  // readFile("fs-remote/6.txt", 70, 1);
+  // readFile("fs-remote/7.txt", 60, 1);
+  // readFile("fs-remote/8.txt", 30, 1);
+  // readFile("fs-remote/9.txt", 20, 1);
+  // readFile("fs-remote/10.txt", 10, 1);
+
+  // readFileRand("fs-remote/4.txt", 10, 10);
+  // readFileRand("fs-remote/5.txt", 80, 1);
+  // readFileRand("fs-remote/6.txt", 70, 1);
+  // readFileRand("fs-remote/7.txt", 60, 1);
+  // readFileRand("fs-remote/8.txt", 30, 1);
+  // readFileRand("fs-remote/9.txt", 20, 1);
+  // readFileRand("fs-remote/10.txt", 10, 1);
 }
