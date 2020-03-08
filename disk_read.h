@@ -23,9 +23,10 @@ uint64_t diskReadSeq(int iterations, int filesize){
 		printf("Memeory not aligned\n");
 		return -1; 
 	}
+	uint64_t sum;
 	for(int j = 0; j < iterations; j++){
 		lseek(fd, offset, SEEK_SET);
-
+		sum = 0;
 		for(int i = 0; i < filesize; i++){
 			asm volatile (
 				"CPUID\n\t"
@@ -47,8 +48,9 @@ uint64_t diskReadSeq(int iterations, int filesize){
 				printf("data not read from filepointer %d, read returned %d at offset = %d at sector = %d with error=%s\n", fd, data, offset, i, strerror(errno));
 			uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
 	  		uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
-	  		arr[i] = end - start;
+	  		sum += end - start;
 		}
+		arr[j] = sum/filesize;
 	}
 	free(sector);
 	close(fd);
@@ -56,10 +58,10 @@ uint64_t diskReadSeq(int iterations, int filesize){
 }
 
 void runDiskReadTests(int iterations, int trials, int filesize){
-  for(int size = 0; size < filesize; size++){
+  for(int size = 1; size < filesize; size *=2){
 	  uint64_t trial_results[trials];
 	  for(int i = 0; i < trials; i++){
-	  	trial_results[i] = diskReadSeq(iterations, size);
+	  	trial_results[i] = diskReadSeq(iterations, size*1024);
 	  }
 	  benchmark_stats stats = fill_stats(trial_results, trials);
 	  printf("Testing seq disk read for a %d MB file\n", size*4);
@@ -89,11 +91,13 @@ uint64_t diskReadRand(int iterations, int filesize){
 		printf("Memeory not aligned\n");
 		return -1; 
 	}
+	uint64_t sum;
 	for(int j = 0; j < iterations; j++){
-		offset = (rand() % 51) * 1024;
-		lseek(fd, offset, SEEK_SET);
-
+		sum = 0;
 		for(int i = 0; i < filesize; i++){
+					offset = (rand() % 51) * 1024;
+
+			lseek(fd, offset, SEEK_SET);
 			asm volatile (
 				"CPUID\n\t"
 					"RDTSC\n\t"
@@ -114,8 +118,9 @@ uint64_t diskReadRand(int iterations, int filesize){
 				printf("data not read from filepointer %d, read returned %d at offset = %d at sector = %d with error=%s\n", fd, data, offset, i, strerror(errno));
 			uint64_t start = ((uint64_t)cycles_high0 << 32) | cycles_low0;
 	  		uint64_t end = ((uint64_t)cycles_high1 << 32) | cycles_low1;
-	  		arr[i] = end - start;
+	  		sum += end - start;
 		}
+		arr[j] = sum/filesize;
 	}
 	free(sector);
 	close(fd);
@@ -123,10 +128,10 @@ uint64_t diskReadRand(int iterations, int filesize){
 }
 
 void runDiskReadTestsRand(int iterations, int trials, int filesize){
-  for(int size = 0; size < filesize; size++){
+  for(int size = 1; size < filesize; size*=2){
 	  uint64_t trial_results[trials];
 	  for(int i = 0; i < trials; i++){
-	  	trial_results[i] = diskReadRand(iterations, size);
+	  	trial_results[i] = diskReadRand(iterations, size*1024);
 	  }
 	  benchmark_stats stats = fill_stats(trial_results, trials);
 	  printf("Testing rand disk read for a %d MB file\n", size*4);
