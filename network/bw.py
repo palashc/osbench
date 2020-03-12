@@ -4,11 +4,11 @@ import numpy as np
 
 # HOSTNAME="100.81.37.40"
 # HOSTNAME="100.81.39.6"
-HOSTNAME="localhost"
-# HOSTNAME='34.203.236.226'
+# HOSTNAME="localhost"
+HOSTNAME='34.203.236.226'
 PORT=8001
-TRIALS = 1000
-BYTES = 1024 * 1024;
+TRIALS = 100
+BYTES = 4096 * 1024;
 
 largeFile = b'x' * BYTES
 
@@ -24,9 +24,15 @@ start, end = 0,0
 for i in range(TRIALS):
     start = time.time()
     s.sendall(largeFile)
+
+    for i in range(1024):
+        s.recv(4096)
+
     end = time.time()
-    times.append(8*BYTES/(end-start))
-    print (i, times[-1])
+    times.append(8*BYTES*2/(end-start))
+    if i % 50 == 0:
+        print (i)
+
 
 def printStats(times):
     print ('Running %d trials on (%s, %d)' % (TRIALS, HOSTNAME, PORT))
