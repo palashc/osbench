@@ -1,5 +1,7 @@
 # OSBench
-OSBench is a benchmaring framework and test suite designed to benchmark an Ubuntu operating system on a Thinkpad X1-carbon thinkpad.
+OSBench is a benchmaring framework and test suite designed to benchmark an Ubuntu operating system on a Thinkpad X1-carbon thinkpad. 
+
+The results can be seen in the report [here](https://drive.google.com/file/d/1UagEpavcYhuJLwtviOf8LLfi5PORz7Id/view?usp=sharing).
 
 ## Benchmarking framework
 We prioritized creating a robust benchmarking framework above creating benchmarks for specific tests. See `benchmark.h`. 
